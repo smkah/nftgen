@@ -1,0 +1,17 @@
+{
+  "name": "nftgen",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "st": "@powershell -Command $env:DEBUG='*';node --harmony-top-level-await index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "debug": "^4.3.2",
+    "jimp": "^0.16.1"
+  }
+}
