@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "st": "@powershell -Command $env:DEBUG='*';node --harmony-top-level-await index.js"
   },
@@ -11,7 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "debug": "^4.3.2",
+    "canvas": "^2.9.0",
+    "debug": "^4.3.3",
+    "face-api.js": "^0.22.2",
     "jimp": "^0.16.1"
   }
 }
