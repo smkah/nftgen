@@ -21,52 +21,6 @@ const loadModels = async () => {
     await faceapi.nets.faceLandmark68Net.loadFromDisk(modelsPath);
 }
 
-const makeNFT = async (imageBuffer) => {
-
-    const image = await canvas.loadImage(imageBuffer);
-
-    const faces = await faceapi.detectAllFaces(
-        image,
-        new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 })
-    ).withFaceLandmarks();
-
-    const source = await Jimp.read(imageBuffer);
-    const glasses = await Jimp.read(path.join(__dirname, 'assets/assessories/glasses.png'));
-
-    for (const face of faces) {
-        const { landmarks } = face;
-        const leftEye = landmarks.getLeftEye()[0];
-        const rightEye = landmarks.getRightEye()[4];
-        const nose = landmarks.getNose()[0];
-
-        log(landmarks)
-
-        const newWidth = Math.sqrt(
-            Math.pow(leftEye.x - rightEye.x, 2) +
-            Math.pow(leftEye.y - rightEye.y, 2)
-        );
-
-        const ab = rightEye.y - leftEye.y;
-        const ac = rightEye.x - leftEye.x;
-
-        const tanACB = ab / ac;
-        const deg = Math.atan(tanACB) * 180 / Math.PI;
-
-        const editedGlasses = glasses.clone()
-            .resize(newWidth + newWidth / 3, Jimp.AUTO)
-            .rotate((-ab * 1 / ab) * deg);
-
-        source.composite(
-            editedGlasses,
-            nose.x - editedGlasses.getWidth() / 2,
-            nose.y - editedGlasses.getHeight() / 2,
-        );
-    }
-
-    return source.getBufferAsync('image/jpeg');
-
-}
-
 const getOverlayValues = landmarks => {
     const nose = landmarks.getNose()
     const jawline = landmarks.getJawOutline()
@@ -77,16 +31,74 @@ const getOverlayValues = landmarks => {
     const opposite = jawRight.y - jawLeft.y
     const jawLength = Math.sqrt(Math.pow(adjacent, 2) + Math.pow(opposite, 2))
 
+    // const angle = Math.round(Math.tan(opposite / adjacent) * 100)
     const angle = Math.atan2(opposite, adjacent) * (180 / Math.PI)
     const width = jawLength * 2.2
 
     return {
         width,
         angle,
+        nose,
         leftOffset: jawLeft.x - width * 0.27,
         topOffset: nose[0].y - width * 0.47,
     }
 }
+
+const makeNFT = async (imageBuffer) => {
+
+    const image = await canvas.loadImage(imageBuffer);
+    const face = await faceapi
+        .detectSingleFace(image, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 }))
+        .withFaceLandmarks();
+
+    const source = await Jimp.read(imageBuffer);
+    const overlay = await Jimp.read(path.join(__dirname, 'assets/masks/overlay.png'));
+
+    const { width, angle, nose } = getOverlayValues(face.landmarks)
+
+    const editedOverlay = overlay.clone()
+        .resize(width + width / 3, Jimp.AUTO)
+        .rotate(angle);
+
+    source.composite(
+        overlay,
+        nose.x - overlay.getWidth() / 2,
+        nose.y - overlay.getHeight() / 2,
+    );
+
+    // for (const face of faces) {
+    //     const { landmarks } = face;
+    //     const leftEye = landmarks.getLeftEye()[0];
+    //     const rightEye = landmarks.getRightEye()[4];
+    //     const nose = landmarks.getNose()[0];
+
+    //     const newWidth = Math.sqrt(
+    //         Math.pow(leftEye.x - rightEye.x, 2) +
+    //         Math.pow(leftEye.y - rightEye.y, 2)
+    //     );
+
+    //     const ab = rightEye.y - leftEye.y;
+    //     const ac = rightEye.x - leftEye.x;
+
+    //     const tanACB = ab / ac;
+    //     const deg = Math.atan(tanACB) * 180 / Math.PI;
+
+    //     const editedGlasses = glasses.clone()
+    //         .resize(newWidth + newWidth / 3, Jimp.AUTO)
+    //         .rotate((-ab * 1 / ab) * deg);
+
+    //     source.composite(
+    //         editedGlasses,
+    //         nose.x - editedGlasses.getWidth() / 2,
+    //         nose.y - editedGlasses.getHeight() / 2,
+    //     );
+    // }
+
+    return source.getBufferAsync('image/jpeg');
+
+}
+
+
 
 const faceDetection = async () => {
 
