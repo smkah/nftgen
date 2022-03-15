@@ -10,7 +10,7 @@ const fs = require('fs')
 const { Canvas, Image, ImageData, loadImage, createCanvas } = canvas
 faceapi.env.monkeyPatch({ Canvas, Image, ImageData })
 
-const log = debug('--> debug:');
+const log = debug('|> debug:');
 
 const loadModels = async () => {
     if (faceapi.nets.ssdMobilenetv1.isLoaded && faceapi.nets.faceLandmark68Net.isLoaded) {
@@ -22,7 +22,7 @@ const loadModels = async () => {
 }
 
 const getOverlayValues = landmarks => {
-    const nose = landmarks.getNose()
+    // const nose = landmarks.getNose()
     const jawline = landmarks.getJawOutline()
 
     const jawLeft = jawline[0]
@@ -31,16 +31,32 @@ const getOverlayValues = landmarks => {
     const opposite = jawRight.y - jawLeft.y
     const jawLength = Math.sqrt(Math.pow(adjacent, 2) + Math.pow(opposite, 2))
 
-    // const angle = Math.round(Math.tan(opposite / adjacent) * 100)
-    const angle = Math.atan2(opposite, adjacent) * (180 / Math.PI)
-    const width = jawLength * 2.2
+    // // const angle = Math.round(Math.tan(opposite / adjacent) * 100)
+    // const angle = Math.atan2(opposite, adjacent) * (180 / Math.PI)
+    // const width = jawLength * 2.2
+
+    const leftEye = landmarks.getLeftEye()[0];
+    const rightEye = landmarks.getRightEye()[4];
+    const nose = landmarks.getNose()[0];
+
+    const width = Math.sqrt(
+        Math.pow(leftEye.x - rightEye.x, 2) +
+        Math.pow(leftEye.y - rightEye.y, 2)
+    );
+
+    const ab = rightEye.y - leftEye.y;
+    const ac = rightEye.x - leftEye.x;
+
+    const tanACB = ab / ac;
+    const deg = Math.atan(tanACB) * 180 / Math.PI;
+
+    const angle = (-ab * 1 / ab) * deg;
 
     return {
         width,
         angle,
         nose,
-        leftOffset: jawLeft.x - width * 0.27,
-        topOffset: nose[0].y - width * 0.47,
+        jawLength
     }
 }
 
@@ -48,23 +64,30 @@ const makeNFT = async (imageBuffer) => {
 
     const image = await canvas.loadImage(imageBuffer);
     const face = await faceapi
-        .detectSingleFace(image, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 }))
+        .detectSingleFace(image, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.2 }))
         .withFaceLandmarks();
 
-    const source = await Jimp.read(imageBuffer);
-    const overlay = await Jimp.read(path.join(__dirname, 'assets/masks/overlay.png'));
+    log('Detect')
 
-    const { width, angle, nose } = getOverlayValues(face.landmarks)
+    const source = await Jimp.read(imageBuffer);
+    const overlay = await Jimp.read(path.join(__dirname, 'assets/masks/hat.png'));
+
+    const { width, angle, nose, jawLength } = getOverlayValues(face.landmarks)
 
     const editedOverlay = overlay.clone()
-        .resize(width + width / 3, Jimp.AUTO)
+        .resize(jawLength + jawLength / 3, Jimp.AUTO)
         .rotate(angle);
 
     source.composite(
-        overlay,
-        nose.x - overlay.getWidth() / 2,
-        nose.y - overlay.getHeight() / 2,
+        editedOverlay,
+        nose.x - editedOverlay.getWidth(),
+        nose.y - editedOverlay.getHeight()
     );
+    // source.composite(
+    //     editedOverlay,
+    //     nose.x - editedOverlay.getWidth() / 2,
+    //     nose.y - editedOverlay.getHeight() / 2,
+    // );
 
     // for (const face of faces) {
     //     const { landmarks } = face;
