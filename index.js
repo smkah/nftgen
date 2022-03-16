@@ -78,10 +78,17 @@ const makeNFT = async (imageBuffer) => {
         .resize(jawLength + jawLength / 3, Jimp.AUTO)
         .rotate(angle);
 
+    log(
+        nose.x, editedOverlay.getWidth() / 2
+    )
+    log(
+        nose.y, editedOverlay.getHeight() / 2
+    )
+
     source.composite(
         editedOverlay,
-        nose.x - editedOverlay.getWidth(),
-        nose.y - editedOverlay.getHeight()
+        nose.x - editedOverlay.getWidth() / 2,
+        nose.y - editedOverlay.getHeight() / 2
     );
     // source.composite(
     //     editedOverlay,

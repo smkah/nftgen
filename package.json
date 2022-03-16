@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "commonjs",
   "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
     "st": "@powershell -Command $env:DEBUG='*';node --harmony-top-level-await index.js"
   },
   "keywords": [],
@@ -14,6 +17,10 @@
     "canvas": "^2.9.0",
     "debug": "^4.3.3",
     "face-api.js": "^0.22.2",
-    "jimp": "^0.16.1"
+    "jimp": "^0.16.1",
+    "next": "^12.1.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "swr": "^1.2.2"
   }
 }
