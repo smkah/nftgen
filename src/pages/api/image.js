@@ -1,5 +1,6 @@
-const Jimp = require('jimp')
-const path = require('path')
+const Jimp = require('jimp'),
+    path = require('path')
+
 
 export default async function handler(req, res) {
     let { width, height, x, y, angle } = JSON.parse(req.body)

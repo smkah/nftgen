@@ -1,4 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
+
+import FolderTree from '../components/FolderTree'
+
 import srcImage from '../../assets/images/sam.jpg'
 import hat from '../../assets/masks/hat.png'
 
@@ -10,15 +13,21 @@ function HomePage() {
         newWidth: srcImage.width, newHeight: srcImage.height
     })
 
+    const [files, setFiles] = useState({})
+
     // const [widthImage, setWidthImage] = useState(srcImage.width)
     // const [heightImage, setHeightImage] = useState(srcImage.height)
 
-    // useEffect(async () => {
-    //     await fetch('/api/image', {
-    //         method: 'POST',
-    //         body: JSON.stringify(subject)
-    //     }).then(res => res.json())
-    // }, [subject])
+    useEffect(async () => {
+        const data = await fetch('/api/files', {
+            method: 'POST',
+            body: JSON.stringify('assets')
+        }).then(res => res.json())
+        setFiles(data)
+
+    }, [])
+
+    const onTreeStateChange = (state, event) => console.log(state, event);
 
     function onHandleWidthChange(e) {
         const newWidth = e.target.value
@@ -36,14 +45,17 @@ function HomePage() {
 
     return (
         <>
-            <div className="flex flex-col justify-center items-center p-10 gap-10">
+            {/* <div className="flex flex-col justify-center items-center p-10 gap-10">
                 <h1 className="text-3xl font-bold text-cyan-600">Mix Images</h1>
                 <div className="relative flex w-full" >
                     <img className="absolute top-0 left-0 -z-10" src={srcImage.src} />
                     <Movel className="absolute top-0 left-0 z-0" img={hat} />
                 </div>
 
-            </div>
+
+            </div> */}
+
+            <FolderTree files={files} />
         </>
     )
 }
