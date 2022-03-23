@@ -20,8 +20,5 @@ export default function handler(req, res) {
         // attributes: ['mode', 'mtime']
     }, eachFile, eachDirectory);
 
-    console.log(files)
-
-
     return res.status(200).json(files)
 } 

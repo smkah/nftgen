@@ -14,16 +14,15 @@ const FileTree: React.FC<Props> = ({ files }) => {
     const { array, set, push, remove, filter, update, clear } = useArray([])
 
     const handleChange = (e) => {
-        e.preventDefault();
 
-        push({
-            name: e.target.id,
+        const isOnArray = array.filter(el => el.name == e.target.id)
 
-        })
-
-        // const isOnArray = filter(n => n.name == e.target?.id) || false
-        // console.log(isOnArray)
-        // if (isOnArray) push({ name: e.target.id })
+        if (isOnArray.length == 0) {
+            push({ name: e.target.id, checked: e.target.checked })
+        }
+        if (isOnArray.length > 0) {
+            remove(array.findIndex(i => i.name == e.target.id))
+        }
 
     }
 
@@ -31,7 +30,7 @@ const FileTree: React.FC<Props> = ({ files }) => {
         return (
             <>
                 <div className="flex gap-2 items-center">
-                    <input type="checkbox" id={name} checked={true} onChange={handleChange} />
+                    <input type="checkbox" id={name} checked={array[array.findIndex(i => i.name == name)]?.checked} onChange={handleChange} />
                     {isOpen ? <h1 className="font-semibold">{name}</h1> : <h1>{name}</h1>}
                 </div>
                 {children?.length > 0 && children.map((item: JSX.IntrinsicAttributes & { name: any; path: any; children: any; checked: any; isOpen?: boolean; }) => (
