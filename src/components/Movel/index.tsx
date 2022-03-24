@@ -14,9 +14,12 @@ const Movel: React.FC<Props> = ({ img, drag = true }) => {
 
     const imgEl = useRef(null)
 
+    console.log(img)
+
     const [elem, setElem] = useState({
-        width: img.width,
-        height: img.height,
+        src: img.src,
+        width: img?.width || 100,
+        height: img?.height || 100,
         x: 10,
         y: 10,
         angle: 0,
@@ -186,11 +189,10 @@ const Movel: React.FC<Props> = ({ img, drag = true }) => {
                         console.log("onPinchEnd");
                     }}
                 />
-                <img
-                    ref={imgEl}
-                    src={img.src}
-                />
-                <button style={{ display: `${isVisibleButton}` }} className="bg-green-500 text-white px-2 py-1" onClick={handleCreate}>Save</button>
+                <>
+                    <img ref={imgEl} src={elem.src} className="" />
+                    <button style={{ display: `${isVisibleButton}` }} className="bg-green-500 text-white px-2 py-1 rounded" onClick={handleCreate}>Save</button>
+                </>
             </div>
         </>
     )

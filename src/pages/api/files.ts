@@ -17,6 +17,7 @@ export default function handler(req, res) {
     const files: DirectoryTree & { isOpen?: boolean } = directoryTree(JSON.parse(req.body), {
         extensions: /\.(jpeg|jpg|png)$/,
         exclude: /models/,
+        normalizePath: true
         // attributes: ['mode', 'mtime']
     }, eachFile, eachDirectory);
 
