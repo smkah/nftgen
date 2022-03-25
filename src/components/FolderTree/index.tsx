@@ -13,9 +13,11 @@ const FileTree: React.FC<Props> = ({ files }) => {
     const { array, push, remove } = useFiles()
 
     const handleChange = async (e) => {
+        const path = e.target.attributes.getNamedItem('data-img').value
+
         const isOnArray = array.filter(el => el.name == e.target.id)
         if (isOnArray.length == 0) {
-            push({ name: e.target.id, checked: e.target.checked, src: e.target.value })
+            push({ name: e.target.id, checked: e.target.checked, src: path })
         }
         if (isOnArray.length > 0) {
             remove(array.findIndex(i => i.name == e.target.id))
@@ -32,7 +34,7 @@ const FileTree: React.FC<Props> = ({ files }) => {
                     </div>
                         :
                         <div className="flex gap-2 items-center">
-                            <input type="checkbox" id={name} checked={array[array.findIndex(i => i.name == name)]?.checked} onChange={handleChange} value={path} />
+                            <input type="checkbox" id={name} checked={array[array.findIndex(i => i.name == name)]?.checked} onChange={handleChange} data-img={path} />
                             <h2>{name}</h2>
                         </div>
                     }

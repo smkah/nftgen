@@ -1,5 +1,5 @@
 import Moveable, { OnDrag, OnResize, OnScale, OnRotate, } from 'react-moveable'
-import { useRef, useState } from 'react'
+import { useState, useRef } from 'react'
 
 interface Props {
     img: {
@@ -12,14 +12,12 @@ interface Props {
 
 const Movel: React.FC<Props> = ({ img, drag = true }) => {
 
-    const imgEl = useRef(null)
-
-    console.log(img)
+    const imgRef = useRef(null)
 
     const [elem, setElem] = useState({
-        src: img.src,
-        width: img?.width || 100,
-        height: img?.height || 100,
+        src: img.src.replace('public', ''),
+        width: img?.width,
+        height: img?.height,
         x: 10,
         y: 10,
         angle: 0,
@@ -42,7 +40,7 @@ const Movel: React.FC<Props> = ({ img, drag = true }) => {
         <>
             <div className="">
                 <Moveable
-                    target={imgEl}
+                    target={imgRef}
                     // container={null}
                     origin={true}
 
@@ -190,7 +188,7 @@ const Movel: React.FC<Props> = ({ img, drag = true }) => {
                     }}
                 />
                 <>
-                    <img ref={imgEl} src={elem.src} className="" />
+                    <img ref={imgRef} src={elem.src} />
                     <button style={{ display: `${isVisibleButton}` }} className="bg-green-500 text-white px-2 py-1 rounded" onClick={handleCreate}>Save</button>
                 </>
             </div>

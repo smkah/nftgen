@@ -1,9 +1,7 @@
-import { join } from 'path';
-import { readdirSync, statSync } from 'fs';
-
 import directoryTree from 'directory-tree';
 import { DirectoryTree, DirectoryTreeCallback } from 'directory-tree';
-import path from 'node:path/win32';
+
+import Jimp from 'jimp'
 
 export default function handler(req, res) {
 
@@ -16,9 +14,8 @@ export default function handler(req, res) {
 
     const files: DirectoryTree & { isOpen?: boolean } = directoryTree(JSON.parse(req.body), {
         extensions: /\.(jpeg|jpg|png)$/,
-        exclude: /models/,
         normalizePath: true
-        // attributes: ['mode', 'mtime']
+        // exclude: /models/,
     }, eachFile, eachDirectory);
 
     return res.status(200).json(files)

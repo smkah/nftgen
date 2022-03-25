@@ -1,48 +1,21 @@
-import { useEffect, useState, useRef } from 'react'
-
+import { useEffect } from 'react'
 import { useFiles } from '../context/FilesContext'
-
 import FolderTree from '../components/FolderTree'
-import srcImage from '../../assets/images/sam.jpg'
-import hat from '../../assets/masks/hat.png'
-
 import Movel from '../components/Movel/index'
+import srcImage from '../../public/assets/images/sam.jpg'
 
 function HomePage() {
 
-    const [subject, setSubject] = useState({
-        newWidth: srcImage.width, newHeight: srcImage.height
-    })
-
     const { files, setFiles, array } = useFiles()
-
-    // const [widthImage, setWidthImage] = useState(srcImage.width)
-    // const [heightImage, setHeightImage] = useState(srcImage.height)
 
     useEffect(async () => {
         const data = await fetch('/api/files', {
             method: 'POST',
-            body: JSON.stringify('assets')
+            body: JSON.stringify('public/assets')
         }).then(res => res.json())
         setFiles(data)
 
     }, [])
-
-    const onTreeStateChange = (state, event) => console.log(state, event);
-
-    function onHandleWidthChange(e) {
-        const newWidth = e.target.value
-        setSubject({ ...subject, newWidth })
-        // setWidthImage(e.target.value)
-    }
-    function onHandleHeightChange(e) {
-        const newHeight = e.target.value
-        setSubject({ ...subject, newHeight })
-        // setHeightImage(e.target.value)
-    }
-
-    // if (error) return <div>Failed to load</div>
-    // if (!res) return <div>Loading...</div>
 
     return (
         <>
@@ -60,7 +33,6 @@ function HomePage() {
                     </div>
                 </div>
             </div>
-            <pre>{array.length > 0 ? 'true' : 'false'}</pre>
         </>
     )
 }
