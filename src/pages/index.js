@@ -14,8 +14,17 @@ function HomePage() {
             body: JSON.stringify('public/assets')
         }).then(res => res.json())
         setFiles(data)
-
     }, [])
+
+    const handleCreate = async () => {
+
+        console.log(array)
+        // const data = await fetch('/api/image', {
+        //     method: 'POST',
+        //     body: JSON.stringify(array)
+        // }).then(res => res.json())
+
+    }
 
     return (
         <>
@@ -28,8 +37,10 @@ function HomePage() {
                         <img className="absolute top-0 left-0 -z-10" src={srcImage.src} />
                         {array.length > 0 ? array.map(e => <Movel className="absolute top-0 left-0 z-0" key={e.name} img={e} />) : ''}
                     </div>
-                    <div className="flex flex-col w-1/6">
+                    <div className="flex flex-col w-1/6 gap-6">
                         <FolderTree files={files} />
+                        <button className="bg-cyan-600 text-white font-semibold uppercase px-2 py-1 rounded"
+                            onClick={handleCreate} >Create</button>
                     </div>
                 </div>
             </div>

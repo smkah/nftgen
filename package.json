@@ -24,6 +24,7 @@
     "react-dom": "^17.0.2",
     "react-folder-tree": "^5.0.3",
     "react-moveable": "^0.31.1",
+    "react-selecto": "^1.15.0",
     "swr": "^1.2.2",
     "use-tree-state": "^1.1.1"
   },
