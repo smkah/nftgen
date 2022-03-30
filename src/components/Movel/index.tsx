@@ -1,14 +1,15 @@
 import Moveable, { OnDrag, OnResize, OnScale, OnRotate, MoveableManagerInterface, Renderer, } from 'react-moveable'
 import Selecto from "react-selecto";
 import { useState, useRef, useEffect } from 'react'
+import { useFiles } from '../../context/FilesContext';
 
 interface Props {
     img: {
+        name: string;
         src: string;
         width: number;
         height: number;
     }
-    drag: boolean;
 }
 
 const DimensionViewable = {
@@ -38,6 +39,8 @@ const DimensionViewable = {
 } as const;
 
 const Movel: React.FC<Props> = ({ img }) => {
+
+    const { array, filter } = useFiles()
 
     const [elem, setElem] = useState({
         src: img.src.replace('public', ''),
@@ -69,14 +72,18 @@ const Movel: React.FC<Props> = ({ img }) => {
         // console.log(elem.selected)
     }
 
+    // let filtered = filter(e => e.name == img.name)
+
+    console.log(img)
+
     const targetRef = useRef<HTMLDivElement>(null);
 
     return (
         <div className="root">
             <div className="container">
-                <div className="target" ref={targetRef} style={{
-                    transform: "translate(0px, 0px) rotate(0deg) scale(1, 1)",
-                }}><img ref={imgRef} src={elem.src} /></div>
+                {/* <div className="target" ref={targetRef} style={{ transform: "translate(0px, 0px) rotate(0deg) scale(1, 1)" }}>
+                </div> */}
+                <img id={img.name} className="target" ref={targetRef} style={{ transform: "translate(0px, 0px) rotate(0deg) scale(1, 1)" }} src={elem.src} />
                 <Moveable
                     target={targetRef}
                     draggable={true}
@@ -97,6 +104,8 @@ const Movel: React.FC<Props> = ({ img }) => {
                         e.target.style.transformOrigin = e.transformOrigin;
                     }}
                     onRender={e => {
+                        let { left, top, rotation, target: { id } } = e.moveable.state
+                        console.log(left, top, rotation, id)
                         e.target.style.transform = e.transform;
                     }}
                 />
