@@ -17,7 +17,7 @@ const FileTree: React.FC<Props> = ({ files }) => {
 
         const isOnArray = array.filter(el => el.name == e.target.id)
         if (isOnArray.length == 0) {
-            push({ name: e.target.id, checked: e.target.checked, src: path })
+            push({ name: e.target.id, src: path, checked: e.target.checked })
         }
         if (isOnArray.length > 0) {
             remove(array.findIndex(i => i.name == e.target.id))

@@ -1,12 +1,13 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useFiles } from '../context/FilesContext'
 import FolderTree from '../components/FolderTree'
 import Movel from '../components/Movel/index'
-import srcImage from '../../public/assets/images/sam.jpg'
+import srcImage from '../../public/assets/images/fundo.png'
 
 function HomePage() {
 
     const { files, setFiles, array } = useFiles()
+    const captureRef = useRef(null)
 
     useEffect(async () => {
         const data = await fetch('/api/files', {
@@ -17,13 +18,10 @@ function HomePage() {
     }, [])
 
     const handleCreate = async () => {
-
-        console.log(array)
-        // const data = await fetch('/api/image', {
-        //     method: 'POST',
-        //     body: JSON.stringify(array)
-        // }).then(res => res.json())
-
+        const data = await fetch('/api/image', {
+            method: 'POST',
+            body: JSON.stringify(array)
+        }).then(res => res.json())
     }
 
     return (
@@ -33,7 +31,7 @@ function HomePage() {
                 <div className="flex flex-1 w-full">
                     <div className="relative flex w-1/6" >
                     </div>
-                    <div className="relative flex w-4/6">
+                    <div ref={captureRef} className="relative flex w-4/6">
                         <img className="absolute top-0 left-0 -z-10" src={srcImage.src} />
                         {array.length > 0 ? array.map(e => <Movel className="absolute top-0 left-0 z-0" key={e.name} img={e} />) : ''}
                     </div>

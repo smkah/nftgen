@@ -1,28 +1,23 @@
 const Jimp = require('jimp'),
     path = require('path')
 
-
 export default async function handler(req, res) {
-    let { width, height, x, y, angle } = JSON.parse(req.body)
 
-    console.log(angle)
+    const elements = JSON.parse(req.body)
+    const subject = await Jimp.read('./public/assets/images/fundo.png');
 
+    for await (let e of elements) {
+        const imgSrc = await Jimp.read(e.src)
+        imgSrc
+            .resize(e.width, Jimp.AUTO)
+            .rotate(rotation > 0 ? Math.floor(-e.rotation * 100) - 1 : 0)
+        subject
+            .composite(imgSrc, e.left, e.top,)
+    }
 
-    let w = Number(x)
-    let h = Number(y)
-    let wth = Number(width)
-    let hht = Number(height)
+    subject
+        .quality(100)
+        .write('./public/assets/images/image.png');
 
-    const person = await Jimp.read('./assets/images/sam.jpg');
-    const hat = await Jimp.read('./assets/masks/hat.png');
-
-    hat.resize(wth, hht).rotate(-angle)
-
-
-    person
-        .composite(hat, w, h)
-        .write('./assets/images/sam1.jpg');
-
-
-    res.status(200).json({ name: 'John Doe' })
+    res.status(200).json({})
 }
