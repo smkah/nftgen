@@ -4,15 +4,21 @@ const Jimp = require('jimp'),
 export default async function handler(req, res) {
 
     const elements = JSON.parse(req.body)
-    const subject = await Jimp.read('./public/assets/images/fundo.png');
+    const subject = await Jimp.read('./public/assets/images/sam.jpg');
 
-    for await (let e of elements) {
-        const imgSrc = await Jimp.read(e.src)
+    for await (let el of elements) {
+        let { src, left, top, width, height, rotation } = el
+        const imgSrc = await Jimp.read(src)
+        width = width || imgSrc.bitmap.width
+        height = height || imgSrc.bitmap.height
+        left = left || 0
+        top = top || 0
+
         imgSrc
-            .resize(e.width, Jimp.AUTO)
-            .rotate(rotation > 0 ? Math.floor(-e.rotation * 100) - 1 : 0)
+            .resize(width, Jimp.AUTO, Jimp.HORIZONTAL_ALIGN_CENTER)
+            .rotate(-rotation)
         subject
-            .composite(imgSrc, e.left, e.top,)
+            .composite(imgSrc, left, top)
     }
 
     subject

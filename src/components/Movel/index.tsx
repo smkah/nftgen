@@ -72,15 +72,19 @@ const Movel: React.FC<Props> = ({ img }) => {
                     onDragOrigin={e => {
                         e.target.style.transformOrigin = e.transformOrigin;
                     }}
+                    // onDrag={({ translate: [left, top] }) => {
+                    //     update(array.findIndex(a => a.name === img.name), { ...img, left, top })
+                    // }}
+                    // onScale={({ scale: [x, y], offsetHeight, offsetWidth }) => {
+                    //     update(array.findIndex(a => a.name === img.name), { ...img, width: offsetWidth * x, height: offsetHeight * y })
+                    // }}
                     onRender={e => {
-                        // let { left, top, rotation } = e.moveable.state
-                        let { left, top, rotation, width, height } = e.moveable.getRect()
-                        update(array.findIndex(a => a.name === img.name), { ...img, rotation, left, top, width, height })
+                        let { left, top, width, height, rotation } = e.moveable.getRect()
+                        update(array.findIndex(a => a.name === img.name), { ...img, left, top, width, height, rotation })
                         e.target.style.transform = e.transform;
                     }}
                 />
             </div>
-            <pre>{JSON.stringify(array, null, 4)}</pre>
         </div>
     )
 

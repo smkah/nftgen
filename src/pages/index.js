@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useFiles } from '../context/FilesContext'
 import FolderTree from '../components/FolderTree'
 import Movel from '../components/Movel/index'
-import srcImage from '../../public/assets/images/fundo.png'
+import srcImage from '../../public/assets/images/sam.jpg'
 
 function HomePage() {
 

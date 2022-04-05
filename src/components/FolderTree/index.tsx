@@ -1,4 +1,4 @@
-import { PhotographIcon, FolderOpenIcon } from '@heroicons/react/solid'
+import { PhotographIcon, FolderOpenIcon, StarIcon } from '@heroicons/react/solid'
 import { useFiles } from '../../context/FilesContext';
 
 interface Props {
