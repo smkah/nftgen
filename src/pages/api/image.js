@@ -15,10 +15,13 @@ export default async function handler(req, res) {
         top = top || 0
 
         imgSrc
-            .resize(width, Jimp.AUTO, Jimp.HORIZONTAL_ALIGN_CENTER)
             .rotate(-rotation)
+            .resize(width, Jimp.AUTO, Jimp.HORIZONTAL_ALIGN_CENTER)
         subject
             .composite(imgSrc, left, top)
+            .posterize(2)
+        // .greyscale()
+        // .invert()
     }
 
     subject
