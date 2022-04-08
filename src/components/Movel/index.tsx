@@ -48,7 +48,7 @@ const Movel: React.FC<Props> = ({ img }) => {
             <div className="container">
                 {/* <div className="target" ref={targetRef} style={{ transform: "translate(0px, 0px) rotate(0deg) scale(1, 1)" }}>
                 </div> */}
-                <img id={img.name} className="target" ref={targetRef} style={{ transform: "translate(0px, 0px) rotate(0deg) scale(1, 1)" }} src={img.src.replace('public', '')} />
+                <img id={img.name} className="target" ref={targetRef as any} style={{ transform: "translate(0px, 0px) rotate(0deg) scale(1, 1)" }} src={img.src.replace('public', '')} />
                 <Moveable
                     target={targetRef}
                     ables={[DimensionViewable]}

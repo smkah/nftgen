@@ -1,21 +1,31 @@
 import directoryTree from 'directory-tree';
 import { DirectoryTree, DirectoryTreeCallback } from 'directory-tree';
 
+interface ExtendDirectoryTree extends DirectoryTree {
+    parent?: string;
+    order?: number;
+}
+
 export default function handler(req, res) {
 
-    const eachFile: DirectoryTreeCallback = (item: DirectoryTree, path: string) => {
-        item.checked = false
+    const eachFile: DirectoryTreeCallback = (item: ExtendDirectoryTree, path: string) => {
+        const folders = path.split('/')
+        item.parent = folders[folders.length - 2];
+        item.order = item.parent == 'assessories' ? 0 : 1;
+        // item.checked = false
     };
 
-    const eachDirectory: DirectoryTreeCallback = (item: DirectoryTree, path: string) => {
-        item.isOpen = true
+    const eachDirectory: DirectoryTreeCallback = (item: ExtendDirectoryTree, path: string) => {
+        // item.isOpen = true
     };
 
-    const files: DirectoryTree & { isOpen?: boolean } = directoryTree(JSON.parse(req.body), {
+    const files: ExtendDirectoryTree = directoryTree(JSON.parse(req.body), {
         extensions: /\.(jpeg|jpg|png)$/,
         normalizePath: true,
         exclude: /models/,
-    }, null, eachDirectory);
+        attributes: ['type', 'extension']
+    }, eachFile, null);
+
 
     return res.status(200).json(files)
 } 

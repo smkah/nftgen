@@ -6,7 +6,7 @@ import srcImage from '../../public/assets/images/sam.jpg'
 
 function HomePage() {
 
-    const { files, setFiles, array } = useFiles()
+    const { setFiles, array } = useFiles()
     const captureRef = useRef(null)
 
     useEffect(async () => {
@@ -36,11 +36,12 @@ function HomePage() {
                         {array.length > 0 ? array.map(e => <Movel className="absolute top-0 left-0 z-0" key={e.name} img={e} />) : ''}
                     </div>
                     <div className="flex flex-col w-1/6 gap-6">
-                        <FolderTree files={files} />
+                        <FolderTree />
                         <button className="bg-cyan-600 text-white font-semibold uppercase px-2 py-1 rounded"
                             onClick={handleCreate} >Create</button>
                     </div>
                 </div>
+                <pre>{JSON.stringify(array, null, 2)}</pre>
             </div>
         </>
     )
