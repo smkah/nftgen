@@ -22,7 +22,7 @@ export default function handler(req, res) {
     const files: ExtendDirectoryTree = directoryTree(JSON.parse(req.body), {
         extensions: /\.(jpeg|jpg|png)$/,
         normalizePath: true,
-        exclude: /models/,
+        exclude: /(models|output)/,
         attributes: ['type', 'extension']
     }, eachFile, null);
 

@@ -3,8 +3,6 @@ const Jimp = require('jimp'),
 
 export default async function handler(req, res) {
 
-
-    const subject = await Jimp.read('./public/assets/images/sam.jpg');
     const elements = JSON.parse(req.body)
 
     let groupBy = function (xs, key) {
@@ -16,46 +14,15 @@ export default async function handler(req, res) {
 
     const groupedElements = groupBy(elements, 'parent')
 
-    const zIndex = Object.keys(groupedElements)
-
-    const a = [
+    const parts = [
         groupedElements['assessories'],
         groupedElements['images'],
     ]
 
-    function allPossibleCombinations(items, isCombination = false) {
-        if (items.length == 1) return items[0]
-        else if (items.length == 2) {
-            var combinations = []
-            for (var i = 0; i < items[1].length; i++) {
-                for (var j = 0; j < items[0].length; j++) {
-                    if (isCombination) {
-                        // clone array to not modify original array
-                        var combination = items[1][i].slice();
-                        combination.push(items[0][j]);
-                    }
-                    else {
-                        var combination = [items[1][i], items[0][j]];
-                    }
-                    combinations.push(combination);
-                }
-            }
-            return combinations
-        }
-        else if (items.length > 2) {
-            var last2 = items.slice(-2);
-            var butLast2 = items.slice(0, items.length - 2);
-            last2 = allPossibleCombinations(last2, isCombination);
-            butLast2.push(last2)
-            var combinations = butLast2;
-            return allPossibleCombinations(combinations, isCombination = true)
-        }
-    }
-
-    const combinations = allPossibleCombinations(a)
-
-    for await (let cbn of combinations) {
-        const cbnSorted = cbn.sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
+    async function saveElement(combination, name) {
+        console.log(name)
+        const subject = await Jimp.read('./public/assets/images/sam.jpg');
+        const cbnSorted = combination.sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
 
         for await (let el of cbnSorted) {
             let { src, left, top, width, height, rotation } = el
@@ -70,12 +37,34 @@ export default async function handler(req, res) {
                 .resize(width, Jimp.AUTO, Jimp.HORIZONTAL_ALIGN_CENTER)
             subject
                 .composite(imgSrc, left, top)
-            subject
-                .quality(100)
-                .write(`./public/assets/output/${Math.random()}.png`);
         }
 
+        subject
+            .quality(100)
+            .write(`./public/assets/output/${name}.png`);
+
+        return
     }
 
-    res.status(200).json({})
+    function cartesian(...args) {
+        let r = [], max = args.length - 1;
+        function helper(arr, i) {
+            for (let j = 0, l = args[i].length; j < l; j++) {
+                let a = arr.slice(0); // clone arr
+                a.push(args[i][j]);
+                if (i == max) {
+                    saveElement(a, `image-${Date.now()}`)
+                    r.push({ name: `image-${Date.now()}`, a });
+                } else {
+                    helper(a, i + 1);
+                }
+            }
+        }
+        helper([], 0);
+        return r;
+    }
+
+    const results = cartesian(...parts)
+
+    res.status(200).json(results)
 }
