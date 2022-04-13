@@ -8,6 +8,9 @@ interface ExtendDirectoryTree extends DirectoryTree {
 
 export default function handler(req, res) {
 
+    const { path, excludes } = JSON.parse(req.body)
+
+
     const eachFile: DirectoryTreeCallback = (item: ExtendDirectoryTree, path: string) => {
         const folders = path.split('/')
         item.parent = folders[folders.length - 2];
@@ -19,13 +22,12 @@ export default function handler(req, res) {
         // item.isOpen = true
     };
 
-    const files: ExtendDirectoryTree = directoryTree(JSON.parse(req.body), {
+    const files: ExtendDirectoryTree = directoryTree(path, {
         extensions: /\.(jpeg|jpg|png)$/,
         normalizePath: true,
-        exclude: /(models|output)/,
+        exclude: excludes?.map(r => new RegExp(r)),
         attributes: ['type', 'extension']
     }, eachFile, null);
-
 
     return res.status(200).json(files)
 } 

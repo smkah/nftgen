@@ -1,7 +1,13 @@
 const Jimp = require('jimp'),
     path = require('path')
+const { v4 } = require('uuid');
+const { readdirSync, rmSync } = require('fs')
 
 export default async function handler(req, res) {
+
+    const path = 'public/assets/output'
+
+    readdirSync(path).forEach(f => rmSync(`${path}/${f}`));
 
     const elements = JSON.parse(req.body)
 
@@ -20,7 +26,6 @@ export default async function handler(req, res) {
     ]
 
     async function saveElement(combination, name) {
-        console.log(name)
         const subject = await Jimp.read('./public/assets/images/sam.jpg');
         const cbnSorted = combination.sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
 
@@ -41,7 +46,7 @@ export default async function handler(req, res) {
 
         subject
             .quality(100)
-            .write(`./public/assets/output/${name}.png`);
+            .write(`./public/assets/output/${name}.jpg`);
 
         return
     }
@@ -53,8 +58,9 @@ export default async function handler(req, res) {
                 let a = arr.slice(0); // clone arr
                 a.push(args[i][j]);
                 if (i == max) {
-                    saveElement(a, `image-${Date.now()}`)
-                    r.push({ name: `image-${Date.now()}`, a });
+                    const name = `image-${v4()}`
+                    saveElement(a, name)
+                    r.push({ name, a });
                 } else {
                     helper(a, i + 1);
                 }
