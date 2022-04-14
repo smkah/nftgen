@@ -5,7 +5,10 @@ import FolderTree from '../components/FolderTree'
 import Movel from '../components/Movel/index'
 import srcImage from '../../public/assets/images/sam.jpg'
 
+import Ruler from "@scena/ruler";
+
 function HomePage() {
+
 
     const { setFiles, array } = useFiles()
     const [results, setResults] = useState([])
@@ -14,6 +17,14 @@ function HomePage() {
     const captureRef = useRef(null)
 
     useEffect(async () => {
+        const ruler = new Ruler(captureRef, {
+            type: "horizontal",
+            zoom: 2
+        });
+        window.addEventListener("resize", () => {
+            ruler.resize();
+        });
+
         const data = await fetch('/api/files', {
             method: 'POST',
             body: JSON.stringify({
@@ -51,7 +62,7 @@ function HomePage() {
                     <div className="relative flex w-1/6" >
                     </div>
                     <div ref={captureRef} className="relative w-3/6">
-                        <img className="absolute top-0 left-0 -z-10" src={srcImage.src} />
+                        <img className="absolute top-0 left-0 -z-10 object-contain" src={srcImage.src} />
                         {array.length > 0 ? array.map(e => <Movel className="" key={e.name} img={e} />) : ''}
                     </div>
                     <div className="flex flex-col w-2/6 gap-5">

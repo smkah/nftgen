@@ -54,6 +54,7 @@ const Movel: React.FC<Props> = ({ img }) => {
                 props={{
                     dimensionViewable: false,
                 }}
+                rootContainer={document.body}
                 draggable={true}
                 throttleDrag={1}
                 edgeDraggable={false}
