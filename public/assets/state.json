@@ -1,0 +1,33 @@
+[
+    {
+        "name": "sam.jpg",
+        "src": "public/assets/subjects/sam.jpg",
+        "parent": "subjects",
+        "order": "1",
+        "checked": true,
+        "left": 114,
+        "top": 131,
+        "width": 460,
+        "height": 460,
+        "rotation": 0
+    },
+    {
+        "name": "glasses1.png",
+        "src": "public/assets/assessories/glasses/glasses1.png",
+        "parent": "glasses",
+        "order": "1",
+        "checked": true,
+        "left": 173.418930745,
+        "top": 90.13154434299997,
+        "width": 778.0394289999999,
+        "height": 265.694262,
+        "rotation": 8.990597552054828
+    },
+    {
+        "name": "blue.jpg",
+        "src": "public/assets/backgrounds/blue.jpg",
+        "parent": "backgrounds",
+        "order": -1,
+        "checked": true
+    }
+]
