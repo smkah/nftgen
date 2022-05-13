@@ -5,11 +5,9 @@ const { readdirSync, rmSync } = require('fs')
 
 export default async function handler(req, res) {
 
-    const path = 'public/assets/output'
-
-    readdirSync(path).forEach(f => rmSync(`${path}/${f}`));
-
     const elements = JSON.parse(req.body)
+    const path = 'public/assets/output'
+    readdirSync(path).forEach(f => rmSync(`${path}/${f}`));
 
     let groupBy = function (xs, key) {
         return xs.reduce(function (rv, x) {
@@ -19,14 +17,10 @@ export default async function handler(req, res) {
     };
 
     const groupedElements = groupBy(elements, 'parent')
-
-    const parts = [
-        groupedElements['assessories'],
-        groupedElements['images'],
-    ]
+    const parts = Object.values(groupedElements)
 
     async function saveElement(combination, name) {
-        const subject = await Jimp.read('./public/assets/images/sam.jpg');
+        const subject = new Jimp(1000, 1000, 'white');
         const cbnSorted = combination.sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
 
         for await (let el of cbnSorted) {

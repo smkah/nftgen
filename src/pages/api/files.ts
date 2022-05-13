@@ -30,4 +30,4 @@ export default function handler(req, res) {
     }, eachFile, null);
 
     return res.status(200).json(files)
-} 
+}

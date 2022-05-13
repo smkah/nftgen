@@ -3,28 +3,17 @@ import Image from 'next/image'
 import { useFiles } from '../context/FilesContext'
 import FolderTree from '../components/FolderTree'
 import Movel from '../components/Movel/index'
-import srcImage from '../../public/assets/images/sam.jpg'
-
-import Ruler from "@scena/ruler";
+// import srcImage from '../../public/assets/images/sam.jpg'
 
 function HomePage() {
-
 
     const { setFiles, array } = useFiles()
     const [results, setResults] = useState([])
     const [isLoading, setIsLoading] = useState(false)
-
     const captureRef = useRef(null)
+    const [zoomValue, setZoomValue] = useState(100)
 
     useEffect(async () => {
-        const ruler = new Ruler(captureRef, {
-            type: "horizontal",
-            zoom: 2
-        });
-        window.addEventListener("resize", () => {
-            ruler.resize();
-        });
-
         const data = await fetch('/api/files', {
             method: 'POST',
             body: JSON.stringify({
@@ -54,35 +43,68 @@ function HomePage() {
         setIsLoading(false)
     }
 
+    const handleZoomChange = (e) => {
+        setZoomValue(e.target.value)
+        captureRef.current.style.zoom = `${zoomValue}%`
+    }
+    const handleSaveConfig = async (e) => {
+        console.log(JSON.stringify(array))
+        const data = await fetch('/api/config/save', {
+            method: 'POST',
+            body: JSON.stringify(array)
+        }).then(res => res.json())
+    }
+    const handleLoadConfig = async (e) => {
+        const data = await fetch('/api/config/load', {
+            method: 'GET'
+        }).then(res => res.json())
+        console.log(data)
+    }
+
     return (
         <>
-            <div className="flex flex-col justify-center items-center p-10 gap-10 min-h-screen">
-                <h1 className="text-3xl font-bold text-cyan-600">Mix Images</h1>
+            <div className="flex flex-col justify-center items-start p-10 gap-10 h-[1200px]">
+                <h1 className="text-3xl font-bold text-cyan-600">MIX IMAGES</h1>
                 <div className="flex flex-1 w-full">
-                    <div className="relative flex w-1/6" >
+
+                    <div ref={captureRef} className="relative w-5/6">
+                        <div className="absolute top-0 left-0 -z-10 border-dotted border-2 border-cyan-200 bg-cyan-50 w-[1000px] h-[1000px]"></div>
+                        {/* <img className="absolute top-0 left-0 -z-10 object-contain" src={srcImage.src} /> */}
+                        {array.length > 0 ? array.map(e => <Movel key={e.name} img={e} />) : <div className="p-5">Select Images...</div>}
                     </div>
-                    <div ref={captureRef} className="relative w-3/6">
-                        <img className="absolute top-0 left-0 -z-10 object-contain" src={srcImage.src} />
-                        {array.length > 0 ? array.map(e => <Movel className="" key={e.name} img={e} />) : ''}
-                    </div>
-                    <div className="flex flex-col w-2/6 gap-5">
-                        <h3 className="text-cyan-600 uppercase font-semibold mb-5">Folders list</h3>
+
+                    <div className="flex flex-col w-1/6 gap-5">
+                        <h4 className="text-cyan-600 uppercase font-semibold">Folders list</h4>
                         <FolderTree />
-                        <button className="bg-cyan-600 text-white font-semibold uppercase px-2 py-1 w-1/3 rounded"
-                            onClick={handleCreate} >Create</button>
-                        {isLoading && <div className="text-cyan-600 font-semibold mb-5">Creating...</div>}
+                        {/* <div className="flex flex-col">
+                            <label htmlFor="zoom">Zoom: {zoomValue}%</label>
+                            <input type="range" id="zoom" name="zoom" min="0" max="250" value={zoomValue} onChange={handleZoomChange} />
+                        </div> */}
+                        <div className="bg-green-200 border-2 border-green-400 text-green-600 p-2 rounded">
+                            <h6>State:</h6>
+                            <div className="flex gap-1">
+                                <button className="bg-green-400 text-white font-semibold px-2 py-1 rounded w-1/2"
+                                    onClick={handleSaveConfig}>Save</button>
+                                <button className="bg-green-400 text-white font-semibold px-2 py-1 rounded w-1/2"
+                                    onClick={handleLoadConfig}>Load...</button>
+                            </div>
+                        </div>
+                        <button className="bg-green-600 text-white font-semibold uppercase px-2 py-1 rounded"
+                            onClick={handleCreate}>{isLoading ? 'Creating...' : 'Create'}</button>
+
+                        <div className="flex flex-col items-center">
+                            {/* <h3 className="text-cyan-600 uppercase font-semibold mb-5">Generated files</h3> */}
+                            <div className="flex gap-1">
+                                {results.length > 0 ?
+                                    results.map((e, k) => <div className="border-2 border-solid object-contain"><Image key={k} src={e.path.replace('public', '')} width="100" height="100" alt={e.name} /></div>)
+                                    :
+                                    <h4 className="bg-red-600 text-gray-50 px-2 py-1 rounded">No results</h4>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div className="flex flex-col items-center">
-                    <h3 className="text-cyan-600 uppercase font-semibold mb-5">Generated files</h3>
-                    <div className="flex gap-5">
-                        {results.length > 0 ?
-                            results.map((e, k) => <Image key={k} src={e.path.replace('public', '')} width="100" height="100" alt={e.name} />)
-                            :
-                            <h4 className="bg-red-600 text-gray-50  px-2 py-1 rounded">No results</h4>
-                        }
-                    </div>
-                </div>
+                <h4 className="text-3l font-thin text-cyan-600">Create by Sam</h4>
                 {/* <pre>{JSON.stringify(results, null, 2)}</pre> */}
             </div>
         </>
