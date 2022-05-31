@@ -1,7 +1,7 @@
 import React, { useContext, useState, createContext } from "react"
 import useArray from '../hooks/useArray'
 
-const FilesContext = createContext()
+const FilesContext = createContext(null)
 
 export default function FilesProvider({ children }) {
     const [files, setFiles] = useState()

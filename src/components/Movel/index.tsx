@@ -1,28 +1,30 @@
 import Moveable, { OnDrag, OnResize, OnScale, OnRotate, MoveableManagerInterface, Renderer } from 'react-moveable'
-// import MoveableHelper from "moveable-helper";
 import Selecto from "react-selecto";
 import { useState, useRef, useEffect } from 'react'
 import { useFiles } from '../../context/FilesContext';
 
-interface Props {
+interface ImgProps {
     img: {
         name: string;
         src: string;
+        order: string;
         width: number;
         height: number;
+        transform: string;
     }
 }
 
-const changeOrderElement = (array, update, img, target, direction) => {
+const transformElement = (array, update, img, target, direction = '') => {
     const indexImage = array.findIndex(a => a.name === img.name)
-    let order = +array[indexImage].order
+
     if (direction === 'up') {
-        order += 1;
+        img.order = img.order + 1
     } else {
-        order -= 1;
+        img.order = img.order - 1
     }
-    update(indexImage, { ...img, order })
-    target.style.zIndex = String(order)
+
+    update(indexImage, img)
+    target.style.zIndex = String(img.order)
 }
 
 const DimensionViewable = {
@@ -56,6 +58,7 @@ const Editable = {
     props: {},
     events: {},
     render(moveable: MoveableManagerInterface<any, any>, React: Renderer) {
+
         const rect = moveable.getRect();
         const { pos2 } = moveable.state;
         const { array, update, img, target } = moveable.props
@@ -76,11 +79,11 @@ const Editable = {
             <div className="flex flex-col gap-1">
                 <button className="flex justify-center bg-cyan-600 text-white w-6 h-6 rounded" onClick={() => {
                     const direction = 'down'
-                    changeOrderElement(array, update, img, target, direction)
+                    transformElement(array, update, img, target, direction)
                 }}>-</button>
                 <button className="flex justify-center bg-cyan-600 text-white w-6 h-6 rounded" onClick={() => {
                     const direction = 'up'
-                    changeOrderElement(array, update, img, target, direction)
+                    transformElement(array, update, img, target, direction)
                 }}>+</button>
                 <div className="flex justify-center items-center border-solid border-2 border-cyan-600 bg-cyan-200 text-cyan-600 w-6 h-6 rounded">
                     {array[array.findIndex(a => a.name === img.name)].order}
@@ -90,14 +93,14 @@ const Editable = {
     }
 } as const;
 
-const Movel: React.FC<Props> = ({ img }) => {
+const Movel: React.FC<ImgProps> = ({ img }) => {
 
     const { array, update } = useFiles()
     const targetRef = useRef<HTMLDivElement>(null);
 
     return (
         <>
-            <img id={img.name} ref={targetRef as any} className="absolute top-0 left-0" style={{ transform: "translate(0px, 0px) rotate(0deg) scale(1, 1)" }} src={img.src.replace('public', '')} />
+            <img id={img.name} ref={targetRef as any} className="absolute top-0 left-0" style={{ transform: img.transform, zIndex: img.order }} src={img.src.replace('public', '')} />
             <Moveable
                 target={targetRef}
                 ables={[DimensionViewable, Editable]}
@@ -128,8 +131,9 @@ const Movel: React.FC<Props> = ({ img }) => {
                 //     update(array.findIndex(a => a.name === img.name), { ...img, width: offsetWidth * x, height: offsetHeight * y })
                 // }}
                 onRender={e => {
+                    const { transform } = e
                     let { left, top, width, height, rotation } = e.moveable.getRect()
-                    update(array.findIndex(a => a.name === img.name), { ...img, left, top, width, height, rotation })
+                    update(array.findIndex(a => a.name === img.name), { ...img, left, top, width, height, rotation, transform })
                     e.target.style.transform = e.transform;
                 }}
             />
