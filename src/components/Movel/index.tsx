@@ -100,7 +100,7 @@ const Movel: React.FC<ImgProps> = ({ img }) => {
 
     return (
         <>
-            <img id={img.name} ref={targetRef as any} className="absolute top-0 left-0" style={{ transform: img.transform, zIndex: img.order }} src={img.src.replace('public', '')} />
+            <img id={img.name} ref={targetRef as any} className="absolute top-0 left-0" style={{ transform: img.transform, zIndex: img.order }} src={img.src.replace('public', '')} alt={img.name} />
             <Moveable
                 target={targetRef}
                 ables={[DimensionViewable, Editable]}

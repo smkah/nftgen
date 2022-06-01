@@ -4,7 +4,7 @@ import { useFiles } from '../context/FilesContext'
 import FolderTree from '../components/FolderTree'
 import Movel from '../components/Movel/index'
 
-function HomePage() {
+function HomePage({ state }) {
 
     const { setFiles, array, clear, push } = useFiles()
     const [results, setResults] = useState([])
@@ -24,11 +24,11 @@ function HomePage() {
             }).then(res => res.json())
             setFiles(files)
 
-            const loadData = await fetch('/api/config/load', {
-                method: 'GET'
-            }).then(res => res.json())
+            // const loadData = await fetch('/api/config/load', {
+            //     method: 'GET'
+            // }).then(res => res.json())
 
-            const arraySorted = loadData.sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
+            const arraySorted = state.sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
 
             clear()
             for await (const item of arraySorted) {
@@ -36,7 +36,7 @@ function HomePage() {
             }
         })();
 
-    }, [])
+    }, [clear, push, setFiles, state])
 
     const handleCreate = async () => {
         setIsLoading(true)
@@ -108,7 +108,7 @@ function HomePage() {
                         <div className="flex flex-col items-center">
                             <div className="flex gap-1">
                                 {results.length > 0 ?
-                                    results.map((e, k) => <div className="border-2 border-solid object-contain"><Image key={k} src={e.path.replace('public', '')} width="100" height="100" alt={e.name} /></div>)
+                                    results.map((e, k) => <div key={k} className="border-2 border-solid object-contain"><Image src={e.path.replace('public', '')} width="100" height="100" alt={e.name} /></div>)
                                     :
                                     <h4 className="bg-red-600 text-gray-50 px-2 py-1 rounded">No results</h4>
                                 }
@@ -123,4 +123,29 @@ function HomePage() {
     )
 }
 
-export default HomePage
+export default HomePage;
+
+import { existsSync } from 'fs'
+import { readFile } from 'fs/promises'
+
+
+export async function getStaticProps() {
+
+    let config = {
+        path: 'public/assets',
+        state: null
+    }
+
+    const filePath = `${config.path}/state.json`;
+
+
+    if (existsSync(filePath)) {
+        config.state = await readFile(filePath, "utf-8")
+        config.state = JSON.parse(config.state)
+    }
+
+    return {
+        props: { state: config.state }
+    }
+
+}
