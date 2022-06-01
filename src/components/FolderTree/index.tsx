@@ -65,15 +65,11 @@ import { useFiles } from '../../context/FilesContext';
 
 // }
 
-const TreeItem = ({
-    label,
-    isSelected,
-    children,
-    item
-}) => {
+const TreeItem = (item) => {
+
     const [isOpen, toggleItemOpen] = useState<boolean | null>(null)
-    const [selected, setSelected] = useState(isSelected)
-    const { files, array, push, remove } = useFiles()
+    const { array, push, remove } = useFiles()
+    const { name, children, type, path, order } = item
 
     const handleChange = async (e) => {
         // const path = e.target.attributes.getNamedItem('data-path').value
@@ -99,38 +95,35 @@ const TreeItem = ({
                         {isOpen ? <FolderOpenIcon /> : <FolderIcon />}
                     </div>
                 )}
-                <div className="font-semibold">
-                    {item.type !== 'directory' && (
+                <div className="flex gap-2 items-center font-semibold">
+                    {type !== 'directory' && (
                         <input
                             type="checkbox"
-                            id={label}
-                            checked={array[array.findIndex(i => i.name == label)]?.checked}
+                            id={name}
+                            checked={array[array.findIndex(i => i.name == name)]?.checked}
                             onChange={handleChange}
-                            data-path={item.path}
-                            value={[item.parent, item.path, item.order]} />
+                            data-path={path}
+                            value={[parent, path, order]} />
                     )}
-                    {label}
+                    {name}
                 </div>
             </div>
-            <div className="ml-8">{isOpen && children}</div>
+            <div className="ml-5">{isOpen && children}</div>
         </>
     )
 }
 
 const RecursiveTree = () => {
-    const { files, array, push, remove } = useFiles()
+    const { files } = useFiles()
 
     const createTree = (item) => {
+
         return item && (
             <TreeItem
-                // id={item.id}
-                key={item.id}
-                isSelected={item.selected}
-                label={item.name}
-                item={item}
+                {...item}
             >
                 {item.children && item.children.map((i) => {
-                    return <Fragment key={i.id}>{createTree(i)}</Fragment>
+                    return <div key={i.name}>{createTree(i)}</div>
                 })}
             </TreeItem>
         )
@@ -138,8 +131,8 @@ const RecursiveTree = () => {
 
     return (
         <>
-            {files && files.children.map((item, i) => (
-                <div key={i}>{createTree(item)}</div>
+            {files && files.children.map((item) => (
+                <div key={item.name}>{createTree(item)}</div>
             ))}
         </>
     )
