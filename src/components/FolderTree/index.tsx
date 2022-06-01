@@ -66,7 +66,6 @@ import { useFiles } from '../../context/FilesContext';
 // }
 
 const TreeItem = ({
-    onSelectCallback,
     label,
     isSelected,
     children,
@@ -100,13 +99,7 @@ const TreeItem = ({
                         {isOpen ? <FolderOpenIcon /> : <FolderIcon />}
                     </div>
                 )}
-                <div
-                    className="font-semibold"
-                // onClick={(e: React.MouseEvent<HTMLInputElement>) => {
-                //     setSelected(!selected)
-                //     onSelectCallback(e)
-                // }}
-                >
+                <div className="font-semibold">
                     {item.type !== 'directory' && (
                         <input
                             type="checkbox"
@@ -124,7 +117,7 @@ const TreeItem = ({
     )
 }
 
-const RecursiveTree = ({ listMeta, onSelectCallback }) => {
+const RecursiveTree = () => {
     const { files, array, push, remove } = useFiles()
 
     const createTree = (item) => {
@@ -132,9 +125,6 @@ const RecursiveTree = ({ listMeta, onSelectCallback }) => {
             <TreeItem
                 // id={item.id}
                 key={item.id}
-                onSelectCallback={(e: React.MouseEvent<HTMLElement>) => {
-                    onSelectCallback(item)
-                }}
                 isSelected={item.selected}
                 label={item.name}
                 item={item}
