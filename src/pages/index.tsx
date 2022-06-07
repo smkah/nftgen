@@ -5,51 +5,72 @@ import FolderTree from '../components/FolderTree'
 import Movel from '../components/Movel/index'
 import Snackbar from '../components/Snackbar'
 
-function HomePage({ state }) {
+function HomePage() {
 
     const { setFiles, array, clear, push } = useFiles()
     const [results, setResults] = useState([])
     const [isLoading, setIsLoading] = useState(false)
-    const captureRef = useRef(null)
     const [zoomValue, setZoomValue] = useState(100)
+    const captureRef = useRef(null)
     const [notify, setNotify] = useState({
         open: false,
-        autoHideDuration: 4000,
+        type: null,
+        autoHideDuration: 3000,
         message: '',
         action: null
     })
 
-    useEffect(() => {
-        setNotify(prevState => {
-            return { ...prevState, open: true, message: 'Loaded state!' }
-        });
-    }, [])
+    const handleSaveConfig = async (e) => {
+        const data = await fetch('/api/config/save', {
+            method: 'POST',
+            body: JSON.stringify(array)
+        })
+            .then(res => res.json())
+            .then((data) => {
+                console.log(data)
+                setNotify(prevState => {
+                    return { ...prevState, open: true, type: 'success', message: 'Saved state' }
+                });
+            })
+
+
+    }
+    const handleLoadConfig = (e = null) => {
+        fetch('api/config/load')
+            .then((res) => res.json())
+            .then((data) => {
+                const arraySorted = data.sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
+                clear()
+                for (const item of arraySorted) {
+                    push(item)
+                }
+                setNotify(prevState => {
+                    return { ...prevState, open: true, type: 'success', message: 'Loaded state' }
+                });
+            })
+            .catch(() => {
+                setNotify(prevState => {
+                    return { ...prevState, open: true, type: 'warning', message: 'Without state file!' }
+                });
+            });
+    }
+
 
     useEffect(() => {
 
-        (async () => {
-            const files = await fetch('/api/files', {
-                method: 'POST',
-                body: JSON.stringify({
-                    path: 'public/assets',
-                    excludes: ['models', 'output']
-                })
-            }).then(res => res.json())
-            setFiles(files)
+        fetch('api/files', {
+            method: 'POST',
+            body: JSON.stringify({
+                path: 'public/assets',
+                excludes: ['models', 'output']
+            })
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                setFiles(data)
+            })
 
-            // const loadData = await fetch('/api/config/load', {
-            //     method: 'GET'
-            // }).then(res => res.json())
-
-            const arraySorted = state.sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
-
-            clear()
-            for await (const item of arraySorted) {
-                push(item)
-            }
-
-        })();
-
+        handleLoadConfig()
     }, [])
 
     const handleCreate = async () => {
@@ -74,18 +95,6 @@ function HomePage({ state }) {
     const handleZoomChange = (e) => {
         setZoomValue(e.target.value)
         captureRef.current.style.zoom = `${zoomValue}%`
-    }
-
-    const handleSaveConfig = async (e) => {
-        const data = await fetch('/api/config/save', {
-            method: 'POST',
-            body: JSON.stringify(array)
-        }).then(res => res.json())
-    }
-    const handleLoadConfig = async (e) => {
-        const data = await fetch('/api/config/load', {
-            method: 'GET'
-        }).then(res => res.json())
     }
 
     return (
@@ -144,23 +153,23 @@ import { existsSync } from 'fs'
 import { readFile } from 'fs/promises'
 
 
-export async function getStaticProps() {
+// export async function getStaticProps() {
 
-    let config = {
-        path: 'public/assets',
-        state: null
-    }
+//     let config = {
+//         path: 'public/assets',
+//         state: null
+//     }
 
-    const filePath = `${config.path}/state.json`;
+//     const filePath = `${config.path}/state.json`;
 
 
-    if (existsSync(filePath)) {
-        config.state = await readFile(filePath, "utf-8")
-        config.state = JSON.parse(config.state)
-    }
+//     if (existsSync(filePath)) {
+//         config.state = await readFile(filePath, "utf-8")
+//         config.state = JSON.parse(config.state)
+//     }
 
-    return {
-        props: { state: config.state }
-    }
+//     return {
+//         props: { state: config.state }
+//     }
 
-}
+// }
