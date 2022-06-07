@@ -3,18 +3,27 @@ import Image from 'next/image'
 import { useFiles } from '../context/FilesContext'
 import FolderTree from '../components/FolderTree'
 import Movel from '../components/Movel/index'
+import Snackbar from '../components/Snackbar'
 
 function HomePage({ state }) {
 
     const { setFiles, array, clear, push } = useFiles()
     const [results, setResults] = useState([])
     const [isLoading, setIsLoading] = useState(false)
-    const [notify, setNotify] = useState({
-        isOpen: false,
-        msg: ''
-    })
     const captureRef = useRef(null)
     const [zoomValue, setZoomValue] = useState(100)
+    const [notify, setNotify] = useState({
+        open: false,
+        autoHideDuration: 4000,
+        message: '',
+        action: null
+    })
+
+    useEffect(() => {
+        setNotify(prevState => {
+            return { ...prevState, open: true, message: 'Loaded state!' }
+        });
+    }, [])
 
     useEffect(() => {
 
@@ -38,12 +47,6 @@ function HomePage({ state }) {
             for await (const item of arraySorted) {
                 push(item)
             }
-
-            setNotify({ ...notify, isOpen: true, msg: 'Estado carregado com sucesso!' })
-
-            setTimeout(function () {
-                setNotify({ ...notify, isOpen: false })
-            }, 3000);
 
         })();
 
@@ -130,18 +133,7 @@ function HomePage({ state }) {
                 {/* <pre>{JSON.stringify(array, null, 2)}</pre> */}
             </div>
             <div className="flex text-3l font-thin text-cyan-600 justify-end p-5">Created by @smkah</div>
-
-            {notify.isOpen && (
-                <div className="absolute m-3 w-fit top-0 right-0 transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
-                    <div className="flex items-center bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                        <strong className="font-bold">OK!</strong>
-                        <span className="ml-2 block sm:inline">{notify.msg}</span>
-                        <span className="">
-                            <svg className="fill-current h-6 w-6 text-green-600" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
-                        </span>
-                    </div>
-                </div>
-            )}
+            <Snackbar notify={notify} onNotify={setNotify}></Snackbar>
         </>
     )
 }
