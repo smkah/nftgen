@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
     access(filePath, async (err) => {
         if (err) {
-            return res.status(404).send({ message: 'Not found state file.' })
+            return res.status(404).send({ err })
         } else {
             const response = await readFile(filePath, "utf-8")
             return res.status(200).send(response)
