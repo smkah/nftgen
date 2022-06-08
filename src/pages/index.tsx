@@ -139,7 +139,7 @@ function HomePage() {
                         </div>
                     </div>
                 </div>
-                {/* <pre>{JSON.stringify(array, null, 2)}</pre> */}
+                <pre>{JSON.stringify(process.env, null, 2)}</pre>
             </div>
             <div className="flex text-3l font-thin text-cyan-600 justify-end p-5">Created by @smkah</div>
             <Snackbar notify={notify} onNotify={setNotify}></Snackbar>
