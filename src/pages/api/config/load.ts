@@ -3,7 +3,7 @@ import { readFile } from 'fs/promises'
 
 export default async function handler(req, res) {
 
-    const filePath = `${process.env.PUBLIC_ASSETS_URL}/state.json`
+    const filePath = `https://nftgen-nine.vercel.app/${process.env.PUBLIC_ASSETS_URL}/state.json`
 
     access(filePath, async (err) => {
         if (err) {
