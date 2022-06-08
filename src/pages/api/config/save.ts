@@ -1,14 +1,11 @@
 import { writeFile } from 'fs/promises'
 
-const config = {
-    path: 'public/assets'
-}
-
 export default async function handler(req, res) {
 
     const data = req.body
+    const filePath = `${process.env.PUBLIC_ASSETS_URL}/state.json`
 
-    await writeFile(`${config.path}/state.json`, data, { encoding: 'utf-8' });
+    await writeFile(filePath, data, { encoding: 'utf-8' });
 
     return res.status(200)
 }

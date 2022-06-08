@@ -61,7 +61,7 @@ function HomePage() {
         fetch('api/files', {
             method: 'POST',
             body: JSON.stringify({
-                path: 'public/assets',
+                path: process.env.PUBLIC_ASSETS_URL,
                 excludes: ['models', 'output']
             })
         })
@@ -83,7 +83,7 @@ function HomePage() {
         const { children } = await fetch('/api/files', {
             method: 'POST',
             body: JSON.stringify({
-                path: 'public/assets/output',
+                path: `${process.env.PUBLIC_ASSETS_URL}/output`,
                 excludes: ['models']
             })
         }).then(res => res.json())
@@ -139,7 +139,7 @@ function HomePage() {
                         </div>
                     </div>
                 </div>
-                <pre>{JSON.stringify(process.env, null, 2)}</pre>
+                {/* <pre>{JSON.stringify(process.env, null, 2)}</pre> */}
             </div>
             <div className="flex text-3l font-thin text-cyan-600 justify-end p-5">Created by @smkah</div>
             <Snackbar notify={notify} onNotify={setNotify}></Snackbar>
@@ -148,28 +148,3 @@ function HomePage() {
 }
 
 export default HomePage;
-
-import { existsSync } from 'fs'
-import { readFile } from 'fs/promises'
-
-
-// export async function getStaticProps() {
-
-//     let config = {
-//         path: 'public/assets',
-//         state: null
-//     }
-
-//     const filePath = `${config.path}/state.json`;
-
-
-//     if (existsSync(filePath)) {
-//         config.state = await readFile(filePath, "utf-8")
-//         config.state = JSON.parse(config.state)
-//     }
-
-//     return {
-//         props: { state: config.state }
-//     }
-
-// }
