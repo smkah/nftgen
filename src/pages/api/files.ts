@@ -10,17 +10,15 @@ export default function handler(req, res) {
 
     const { path, excludes } = JSON.parse(req.body)
 
-
     const eachFile: DirectoryTreeCallback = (item: ExtendDirectoryTree, path: string) => {
         const folders = path.split('/')
         item.parent = folders[folders.length - 2];
         item.order = item.parent == 'assessories' ? 0 : 1;
-        // item.checked = false
     };
 
-    const eachDirectory: DirectoryTreeCallback = (item: ExtendDirectoryTree, path: string) => {
-        // item.isOpen = true
-    };
+    // const eachDirectory: DirectoryTreeCallback = (item: ExtendDirectoryTree, path: string) => {
+    //     // item.isOpen = true
+    // };
 
     const files: ExtendDirectoryTree = directoryTree(path, {
         extensions: /\.(jpeg|jpg|png)$/,
@@ -29,5 +27,5 @@ export default function handler(req, res) {
         attributes: ['type', 'extension']
     }, eachFile, null);
 
-    return res.status(200).json(files)
+    return res.status(200).send(files)
 }

@@ -46,7 +46,7 @@ function HomePage() {
         fetch('api/files', {
             method: 'POST',
             body: JSON.stringify({
-                path: 'public/assets',
+                path: process.env.PUBLIC_ASSETS_URL,
                 excludes: ['models', 'output']
             })
         })
@@ -54,6 +54,7 @@ function HomePage() {
             .then((data) => {
                 setFiles(data)
             })
+            .catch(err => console.log(err))
 
         handleLoadConfig()
     }, [])
