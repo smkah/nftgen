@@ -50,7 +50,10 @@ function HomePage() {
                 excludes: ['models', 'output']
             })
         })
-            .then((res) => res.json())
+            .then((res) => {
+                console.log(res)
+                // res.json()
+            })
             .then((data) => {
                 setFiles(data)
             })
