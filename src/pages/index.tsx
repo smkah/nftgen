@@ -20,48 +20,33 @@ function HomePage() {
         action: null
     })
 
-    const handleSaveConfig = async (e) => {
-        const data = await fetch('/api/config/save', {
-            method: 'POST',
-            body: JSON.stringify(array)
-        })
-            .then(res => res.json())
-            .then((data) => {
-                console.log(data)
-                setNotify(prevState => {
-                    return { ...prevState, open: true, type: 'success', message: 'Saved state' }
-                });
-            })
-
-
+    const handleSaveConfig = (e) => {
+        localStorage.setItem('state', JSON.stringify(array))
+        setNotify(prevState => {
+            return { ...prevState, open: true, type: 'success', message: 'Saved state' }
+        });
     }
     const handleLoadConfig = (e = null) => {
-        fetch('api/config/load')
-            .then((res) => res.json())
-            .then((data) => {
-                const arraySorted = data.sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
-                clear()
-                for (const item of arraySorted) {
-                    push(item)
-                }
-                setNotify(prevState => {
-                    return { ...prevState, open: true, type: 'success', message: 'Loaded state' }
-                });
-            })
-            .catch(() => {
-                setNotify(prevState => {
-                    return { ...prevState, open: true, type: 'warning', message: 'Without state file!' }
-                });
-            });
-    }
 
+        if (localStorage.getItem('state')) {
+            let stateValue = JSON.parse(localStorage.getItem('state'));
+            const arraySorted = stateValue.sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
+            clear()
+            for (const item of arraySorted) {
+                push(item)
+            }
+            setNotify(prevState => {
+                return { ...prevState, open: true, type: 'success', message: 'Loaded state' }
+            });
+        }
+    }
 
     useEffect(() => {
 
         fetch('api/files', {
             method: 'POST',
             body: JSON.stringify({
-                path: process.env.PUBLIC_ASSETS_URL,
+                path: 'public/assets',
                 excludes: ['models', 'output']
             })
         })
@@ -83,7 +68,7 @@ function HomePage() {
         const { children } = await fetch('/api/files', {
             method: 'POST',
             body: JSON.stringify({
-                path: `${process.env.PUBLIC_ASSETS_URL}/output`,
+                path: 'public/assets/output',
                 excludes: ['models']
             })
         }).then(res => res.json())
