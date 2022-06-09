@@ -51,11 +51,11 @@ function HomePage() {
             })
         })
             .then((res) => {
-                console.log(res)
-                // res.json()
+                res.json()
             })
             .then((data) => {
-                setFiles(data)
+                console.log(data)
+                // setFiles(data)
             })
             .catch(err => console.log(err))
 

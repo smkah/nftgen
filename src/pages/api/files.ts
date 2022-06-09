@@ -27,5 +27,5 @@ export default function handler(req, res) {
         attributes: ['type', 'extension']
     }, eachFile, null);
 
-    return res.status(200).send(files)
+    return res.status(200).send({ msg: 'resposta', files: files })
 }
