@@ -1,5 +1,6 @@
 import directoryTree from 'directory-tree';
 import { DirectoryTree, DirectoryTreeCallback } from 'directory-tree';
+import { stdout } from 'process';
 
 interface ExtendDirectoryTree extends DirectoryTree {
     parent?: string;
@@ -11,6 +12,7 @@ export default function handler(req, res) {
     try {
 
         const { path, excludes } = JSON.parse(req.body)
+        process.stdout.write(path, excludes)
 
         const eachFile: DirectoryTreeCallback = (item: ExtendDirectoryTree, path: string) => {
             const folders = path.split('/')
@@ -28,11 +30,10 @@ export default function handler(req, res) {
             exclude: excludes?.map(r => new RegExp(r)),
             attributes: ['type', 'extension']
         }, eachFile, null);
-        console.log(files)
+        process.stdout.write('loading files')
         return res.status(200).json({ msg: 'ok', files: files })
     } catch (error) {
-        console.log(error)
-
+        process.stdout.write(error)
         return res.send(error)
     }
 
