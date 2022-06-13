@@ -8,24 +8,31 @@ interface ExtendDirectoryTree extends DirectoryTree {
 
 export default function handler(req, res) {
 
-    const { path, excludes } = JSON.parse(req.body)
+    try {
 
-    const eachFile: DirectoryTreeCallback = (item: ExtendDirectoryTree, path: string) => {
-        const folders = path.split('/')
-        item.parent = folders[folders.length - 2];
-        item.order = item.parent == 'assessories' ? 0 : 1;
-    };
+        const { path, excludes } = JSON.parse(req.body)
 
-    // const eachDirectory: DirectoryTreeCallback = (item: ExtendDirectoryTree, path: string) => {
-    //     // item.isOpen = true
-    // };
+        const eachFile: DirectoryTreeCallback = (item: ExtendDirectoryTree, path: string) => {
+            const folders = path.split('/')
+            item.parent = folders[folders.length - 2];
+            item.order = item.parent == 'assessories' ? 0 : 1;
+        };
 
-    const files: ExtendDirectoryTree = directoryTree(path, {
-        extensions: /\.(jpeg|jpg|png)$/,
-        normalizePath: true,
-        exclude: excludes?.map(r => new RegExp(r)),
-        attributes: ['type', 'extension']
-    }, eachFile, null);
+        // const eachDirectory: DirectoryTreeCallback = (item: ExtendDirectoryTree, path: string) => {
+        //     // item.isOpen = true
+        // };
 
-    return res.status(200).json(files)
+        const files: ExtendDirectoryTree = directoryTree(path, {
+            extensions: /\.(jpeg|jpg|png)$/,
+            normalizePath: true,
+            exclude: excludes?.map(r => new RegExp(r)),
+            attributes: ['type', 'extension']
+        }, eachFile, null);
+
+        return res.status(200).json(files)
+    } catch (error) {
+        return res.send(error)
+    }
+
+
 }
