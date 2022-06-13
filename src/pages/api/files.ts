@@ -12,7 +12,7 @@ export default function handler(req, res) {
     try {
 
         const { path, excludes } = JSON.parse(req.body)
-        process.stdout.write(path, excludes)
+        console.log(path, excludes)
 
         const eachFile: DirectoryTreeCallback = (item: ExtendDirectoryTree, path: string) => {
             const folders = path.split('/')
@@ -30,10 +30,10 @@ export default function handler(req, res) {
             exclude: excludes?.map(r => new RegExp(r)),
             attributes: ['type', 'extension']
         }, eachFile, null);
-        process.stdout.write('loading files')
+        console.log('loading files')
         return res.status(200).json({ msg: 'ok', files: files })
     } catch (error) {
-        process.stdout.write(error)
+        console.log(error)
         return res.send(error)
     }
 
