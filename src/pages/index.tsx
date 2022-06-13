@@ -41,26 +41,27 @@ function HomePage() {
         }
     }
 
+    const loadImages = async () => {
+        try {
+            const res = await fetch('/api/files', {
+                method: 'POST',
+                body: JSON.stringify({
+                    path: process.env.PUBLIC_ASSETS_URL,
+                    excludes: ['models', 'output']
+                })
+            });
+            const data = await res.json();
+            console.log(data)
+            setFiles(data)
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     useEffect(() => {
-
-        fetch('api/files', {
-            method: 'POST',
-            body: JSON.stringify({
-                path: process.env.PUBLIC_ASSETS_URL,
-                excludes: ['models', 'output']
-            })
-        })
-            .then((res) => {
-                res.json()
-            })
-            .then((data) => {
-                console.log(data)
-                // setFiles(data)
-            })
-            .catch(err => console.log(err))
-
+        loadImages();
         handleLoadConfig()
-    }, [])
+    })
 
     const handleCreate = async () => {
         setIsLoading(true)

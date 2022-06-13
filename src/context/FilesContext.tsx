@@ -1,5 +1,5 @@
 import React, { useContext, useState, createContext } from "react"
-import useArray from '../hooks/useArray'
+import useArray from '../libs/useArray'
 
 const FilesContext = createContext(null)
 

@@ -14,7 +14,7 @@ const Snackbar = ({ notify, onNotify }) => {
             });
         }, notify.autoHideDuration);
 
-    }, [notify])
+    }, [notify, onNotify])
 
     const close = () => {
         onNotify(prevState => {
