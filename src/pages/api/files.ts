@@ -28,9 +28,11 @@ export default function handler(req, res) {
             exclude: excludes?.map(r => new RegExp(r)),
             attributes: ['type', 'extension']
         }, eachFile, null);
-
-        return res.status(200).json(files)
+        console.log(files)
+        return res.status(200).json({ msg: 'ok', files: files })
     } catch (error) {
+        console.log(error)
+
         return res.send(error)
     }
 
